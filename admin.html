@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - WCDO</title>
+    <!-- This page is hidden from regular users -->
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div class="admin-logo">
+                <img src="assets/images/logo.jpg" alt="WCDO Logo" style="height: 50px;">
+                <h1>Admin Dashboard</h1>
+            </div>
+            <a href="index.html" class="btn-secondary" style="color: var(--primary); border-color: var(--primary);">Back to Site</a>
+        </div>
+        
+        <div class="admin-body">
+            <!-- Login -->
+            <div id="adminLoginFull">
+                <div class="login-card">
+                    <h2>Admin Login</h2>
+                    <form id="loginFormFull">
+                        <div class="form-group">
+                            <label for="adminUsernameFull">Username</label>
+                            <input type="text" id="adminUsernameFull" placeholder="Enter username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPasswordFull">Password</label>
+                            <input type="password" id="adminPasswordFull" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Login</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Dashboard -->
+            <div id="adminPanelFull" style="display: none;">
+                <div class="admin-toolbar">
+                    <button class="btn-primary" id="newPostBtnFull"><i class="fas fa-plus"></i> New Post</button>
+                    <button class="btn-secondary" id="logoutAdminFull"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+                
+                <div class="admin-stats">
+                    <div class="stat-card"><span class="stat-value" id="totalPostsFull">0</span><span class="stat-label">Total Posts</span></div>
+                    <div class="stat-card"><span class="stat-value" id="publishedPostsFull">0</span><span class="stat-label">Published</span></div>
+                    <div class="stat-card"><span class="stat-value" id="draftPostsFull">0</span><span class="stat-label">Drafts</span></div>
+                </div>
+                
+                <div class="post-form-container" id="postFormContainerFull" style="display: none;">
+                    <h3 id="formTitleFull">Create New Post</h3>
+                    <form id="postFormFull">
+                        <input type="hidden" id="editPostIdFull">
+                        <div class="form-group"><label for="postTitleFull">Title</label><input type="text" id="postTitleFull" placeholder="Post title" required></div>
+                        <div class="form-group">
+                            <label for="postCategoryFull">Category</label>
+                            <select id="postCategoryFull">
+                                <option value="News">News</option>
+                                <option value="Events">Events</option>
+                                <option value="Stories">Stories</option>
+                                <option value="Updates">Updates</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label for="postImageFull">Image URL</label><input type="text" id="postImageFull" placeholder="https://images.unsplash.com/..."></div>
+                        <div class="form-group"><label for="postExcerptFull">Excerpt</label><textarea id="postExcerptFull" rows="2" placeholder="Brief summary..."></textarea></div>
+                        <div class="form-group"><label for="postContentFull">Content</label><textarea id="postContentFull" rows="6" placeholder="Full blog content..." required></textarea></div>
+                        <div class="form-group">
+                            <label for="postStatusFull">Status</label>
+                            <select id="postStatusFull">
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary" id="savePostBtnFull">Save Post</button>
+                        <button type="button" class="btn-secondary" id="cancelPostBtnFull">Cancel</button>
+                    </form>
+                </div>
+                
+                <div class="admin-posts-list">
+                    <h3>Manage Posts</h3>
+                    <div id="adminPostsListFull"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/blog.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

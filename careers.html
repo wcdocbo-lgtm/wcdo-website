@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- ======================================== -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <title>Careers - WCDO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ======================================== */
+        /* CAREERS PAGE SPECIFIC STYLES */
+        /* ======================================== */
+        .careers-page {
+            padding: 60px 0;
+            background: #f8f9fa;
+        }
+
+        /* Job Filters */
+        .job-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .job-filters input,
+        .job-filters select {
+            padding: 12px 18px;
+            border: 2px solid #e8ecf1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Open Sans', sans-serif;
+            flex: 1;
+            min-width: 200px;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+
+        .job-filters input:focus,
+        .job-filters select:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+
+        .job-filters .filter-btn {
+            padding: 12px 30px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .job-filters .filter-btn:hover {
+            background: #1B5E20;
+            transform: translateY(-2px);
+        }
+
+        /* Job Cards */
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid #2E7D32;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .job-card.featured {
+            border-left-color: #FF6F00;
+            background: linear-gradient(135deg, #fff8f0, #ffffff);
+        }
+
+        .job-card .job-info {
+            flex: 1;
+        }
+
+        .job-card .job-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .job-card .job-title a {
+            color: #1a1a2e;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .job-card .job-title a:hover {
+            color: #2E7D32;
+        }
+
+        .job-card .job-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px 25px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .job-card .job-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .job-card .job-meta i {
+            color: #2E7D32;
+            width: 18px;
+        }
+
+        .job-card .job-description {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .job-card .job-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .job-card .job-tags .tag {
+            padding: 4px 14px;
+            background: #e8f5e9;
+            color: #2E7D32;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .job-card .job-tags .tag.highlight {
+            background: #fff3e0;
+            color: #E65100;
+        }
+
+        .job-card .job-apply {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            min-width: 140px;
+        }
+
+        .job-card .job-apply .deadline {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .job-card .job-apply .deadline i {
+            margin-right: 4px;
+        }
+
+        .btn-apply {
+            padding: 10px 30px;
+            background: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-apply:hover {
+            background: #1B5E20;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-apply.outline {
+            background: transparent;
+            color: #2E7D32;
+            border: 2px solid #2E7D32;
+        }
+
+        .btn-apply.outline:hover {
+            background: #2E7D32;
+            color: white;
+        }
+
+        /* No Jobs Found */
+        .no-jobs {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .no-jobs i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        .no-jobs h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .no-jobs p {
+            color: #888;
+        }
+
+        /* ======================================== */
+        /* JOB APPLICATION MODAL */
+        /* ======================================== */
+        .application-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .application-modal.active {
+            display: flex;
+        }
+
+        .application-modal .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .application-modal .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+            background: none;
+            border: none;
+        }
+
+        .application-modal .close-modal:hover {
+            color: #333;
+        }
+
+        .application-modal h2 {
+            font-size: 1.8rem;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .application-modal .applying-for {
+            color: #2E7D32;
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .application-modal .form-group {
+            margin-bottom: 20px;
+        }
+
+        .application-modal .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .application-modal .form-group label .required {
+            color: #e53935;
+        }
+
+        .application-modal .form-group input,
+        .application-modal .form-group select,
+        .application-modal .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8ecf1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Open Sans', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .application-modal .form-group input:focus,
+        .application-modal .form-group select:focus,
+        .application-modal .form-group textarea:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+
+        .application-modal .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .application-modal .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .application-modal .file-upload {
+            border: 2px dashed #ddd;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .application-modal .file-upload:hover {
+            border-color: #2E7D32;
+            background: #f8f9fa;
+        }
+
+        .application-modal .file-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .application-modal .file-upload i {
+            font-size: 2.5rem;
+            color: #2E7D32;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .application-modal .file-upload p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .application-modal .file-upload .file-name {
+            color: #2E7D32;
+            font-weight: 600;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .application-modal .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2E7D32, #1B5E20);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .application-modal .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.3);
+        }
+
+        /* ======================================== */
+        /* RESPONSIVE */
+        /* ======================================== */
+        @media (max-width: 768px) {
+            .job-card {
+                flex-direction: column;
+            }
+
+            .job-card .job-apply {
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .application-modal .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .job-filters {
+                flex-direction: column;
+            }
+
+            .job-filters input,
+            .job-filters select {
+                min-width: auto;
+            }
+
+            .application-modal .modal-content {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .job-card .job-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <a href="index.html" class="logo-with-text">
+                        <img src="assets/images/logo.jpg" alt="WCDO Logo" class="logo-img">
+                    </a>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="what-we-do.html" class="nav-link">What We Do</a></li>
+                    <li><a href="programs.html" class="nav-link">Programs</a></li>
+                    <li><a href="news-blog.html" class="nav-link">News & Blog</a></li>
+                    <li><a href="get-involved.html" class="nav-link active">Get Involved</a></li>
+					<li><a href="careers.html" class="nav-link">Careers</a></li>
+                    <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    <li><a href="donate.html" class="btn-donate-nav">Donate</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Careers at WCDO</h1>
+            <p>Join our team and help us build stronger communities in Makueni County</p>
+        </div>
+    </section>
+
+    <!-- Careers Content -->
+    <section class="careers-page">
+        <div class="container">
+            <!-- Job Filters -->
+            <div class="job-filters">
+                <input type="text" id="jobSearch" placeholder="Search jobs by title or keyword...">
+                <select id="jobDepartment">
+                    <option value="">All Departments</option>
+                    <option value="health">Health & Rehabilitation</option>
+                    <option value="education">Education</option>
+                    <option value="livelihood">Livelihood</option>
+                    <option value="inclusion">Social Inclusion</option>
+                    <option value="empowerment">Empowerment</option>
+                    <option value="administration">Administration</option>
+                    <option value="finance">Finance</option>
+                </select>
+                <select id="jobType">
+                    <option value="">All Types</option>
+                    <option value="full-time">Full Time</option>
+                    <option value="part-time">Part Time</option>
+                    <option value="contract">Contract</option>
+                    <option value="internship">Internship</option>
+                    <option value="volunteer">Volunteer</option>
+                </select>
+                <button class="filter-btn" id="clearFilters"><i class="fas fa-undo"></i> Reset</button>
+            </div>
+
+            <!-- Jobs List -->
+            <div id="jobsList">
+                <!-- Jobs loaded dynamically -->
+            </div>
+
+            <!-- No Jobs Message (hidden by default) -->
+            <div class="no-jobs" id="noJobs" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>No Jobs Found</h3>
+                <p>Try adjusting your search filters or check back later for new opportunities.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================================== -->
+    <!-- JOB APPLICATION MODAL -->
+    <!-- ======================================== -->
+    <div class="application-modal" id="applicationModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeApplicationModal">&times;</button>
+            <h2>Apply for this Position</h2>
+            <p class="applying-for" id="applyingFor">Position: <span id="jobTitleDisplay"></span></p>
+            
+            <form id="jobApplicationForm" enctype="multipart/form-data">
+                <input type="hidden" id="jobId" name="jobId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name <span class="required">*</span></label>
+                        <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name <span class="required">*</span></label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email Address <span class="required">*</span></label>
+                        <input type="email" id="applicantEmail" name="email" placeholder="you@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="applicantPhone" name="phone" placeholder="+254 700 123 456" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Current Location</label>
+                    <input type="text" id="applicantLocation" name="location" placeholder="e.g., Wote, Makueni">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Years of Experience</label>
+                        <select id="applicantExperience" name="experience">
+                            <option value="">Select experience level</option>
+                            <option value="0-1">0-1 years</option>
+                            <option value="1-3">1-3 years</option>
+                            <option value="3-5">3-5 years</option>
+                            <option value="5-10">5-10 years</option>
+                            <option value="10+">10+ years</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Highest Education Level</label>
+                        <select id="applicantEducation" name="education">
+                            <option value="">Select education level</option>
+                            <option value="certificate">Certificate</option>
+                            <option value="diploma">Diploma</option>
+                            <option value="bachelors">Bachelor's Degree</option>
+                            <option value="masters">Master's Degree</option>
+                            <option value="phd">PhD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Cover Letter / Why are you interested? <span class="required">*</span></label>
+                    <textarea id="applicantCoverLetter" name="coverLetter" rows="5" placeholder="Tell us why you're the right candidate for this position..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload CV/Resume <span class="required">*</span></label>
+                    <div class="file-upload" id="fileUpload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload your CV (PDF, DOC, DOCX)</p>
+                        <p style="font-size: 0.8rem; color: #999;">Max file size: 5MB</p>
+                        <span class="file-name" id="fileName">File selected: </span>
+                        <input type="file" id="applicantCV" name="cv" accept=".pdf,.doc,.docx" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>How did you hear about us?</label>
+                    <select id="applicantSource" name="source">
+                        <option value="">Select an option</option>
+                        <option value="website">WCDO Website</option>
+                        <option value="social-media">Social Media</option>
+                        <option value="referral">Employee Referral</option>
+                        <option value="job-board">Job Board</option>
+                        <option value="community">Community Network</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="applicantConsent" name="consent" required>
+                        I confirm that the information provided is accurate and I consent to WCDO storing my data for recruitment purposes. <span class="required">*</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Application
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <span class="footer-logo-text">WCDO</span>
+                        <span class="footer-logo-sub">Community Development</span>
+                    </div>
+                    <p>Empowering communities through sustainable development, health, education, and social inclusion in Makueni County, Kenya.</p>
+                    <div class="footer-social">
+                        <a href="https://www.facebook.com/profile.php?id=61583773153705" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="what-we-do.html">What We Do</a></li>
+                        <li><a href="programs.html">Programs</a></li>
+                        <li><a href="news-blog.html">News & Blog</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Our Programs</h4>
+                    <ul>
+                        <li><a href="programs.html">Health & Rehabilitation</a></li>
+                        <li><a href="programs.html">Inclusive Education</a></li>
+                        <li><a href="programs.html">Inclusive Livelihood</a></li>
+                        <li><a href="programs.html">Social Inclusion</a></li>
+                        <li><a href="programs.html">Empowerment</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-newsletter">
+                    <h4>Newsletter</h4>
+                    <p>Subscribe to stay updated with our latest news and programs.</p>
+                    <form id="newsletterForm" class="newsletter-form">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 WOTE COMMUNITY DEVELOPMENT ORGANISATION. All Rights Reserved.</p>
+                <p>Registered CBO in the Republic of Kenya | P.O BOX 197-90300, WOTE-MAKUENI</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/careers.js"></script>
+</body>
+</html>

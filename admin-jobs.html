@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Jobs</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-jobs-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .admin-jobs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .admin-jobs-header h1 {
+            font-size: 2rem;
+            color: #1a1a2e;
+        }
+        .job-form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: none;
+        }
+        .job-form-card.active {
+            display: block;
+        }
+        .job-form-card .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .job-form-card .form-group {
+            margin-bottom: 18px;
+        }
+        .job-form-card label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .job-form-card input,
+        .job-form-card select,
+        .job-form-card textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e8ecf1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .job-form-card input:focus,
+        .job-form-card select:focus,
+        .job-form-card textarea:focus {
+            outline: none;
+            border-color: #2E7D32;
+        }
+        .job-form-card textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .admin-job-item {
+            background: white;
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid #2E7D32;
+        }
+        .admin-job-item .job-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .admin-job-item .job-info span {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .admin-job-item .job-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .admin-job-item .job-actions button {
+            padding: 6px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        .admin-job-item .job-actions .edit-btn {
+            background: #1565C0;
+            color: white;
+        }
+        .admin-job-item .job-actions .edit-btn:hover {
+            background: #0D47A1;
+        }
+        .admin-job-item .job-actions .delete-btn {
+            background: #e53935;
+            color: white;
+        }
+        .admin-job-item .job-actions .delete-btn:hover {
+            background: #c62828;
+        }
+        .admin-job-item .job-actions .toggle-btn {
+            background: #FF6F00;
+            color: white;
+        }
+        .admin-job-item .job-actions .toggle-btn:hover {
+            background: #E65100;
+        }
+        .status-badge {
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-badge.active {
+            background: #e8f5e9;
+            color: #2E7D32;
+        }
+        .status-badge.inactive {
+            background: #fce4ec;
+            color: #c62828;
+        }
+        @media (max-width: 768px) {
+            .job-form-card .form-row {
+                grid-template-columns: 1fr;
+            }
+            .admin-job-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .admin-job-item .job-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-jobs-container">
+        <div class="admin-jobs-header">
+            <h1><i class="fas fa-briefcase" style="color:#2E7D32;"></i> Manage Jobs</h1>
+            <div>
+                <button class="btn-primary" id="showJobFormBtn"><i class="fas fa-plus"></i> Add New Job</button>
+                <a href="index.html" class="btn-secondary" style="color: var(--primary); border-color: var(--primary); margin-left:10px;">Back to Site</a>
+            </div>
+        </div>
+
+        <!-- Job Form -->
+        <div class="job-form-card" id="jobFormCard">
+            <h2 id="formTitle">Add New Job</h2>
+            <form id="jobForm">
+                <input type="hidden" id="editJobId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Job Title <span class="required">*</span></label>
+                        <input type="text" id="jobTitle" placeholder="e.g., Community Health Officer" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Department <span class="required">*</span></label>
+                        <select id="jobDepartment" required>
+                            <option value="health">Health & Rehabilitation</option>
+                            <option value="education">Education</option>
+                            <option value="livelihood">Livelihood</option>
+                            <option value="inclusion">Social Inclusion</option>
+                            <option value="empowerment">Empowerment</option>
+                            <option value="administration">Administration</option>
+                            <option value="finance">Finance</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Job Type <span class="required">*</span></label>
+                        <select id="jobType" required>
+                            <option value="full-time">Full Time</option>
+                            <option value="part-time">Part Time</option>
+                            <option value="contract">Contract</option>
+                            <option value="internship">Internship</option>
+                            <option value="volunteer">Volunteer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Location <span class="required">*</span></label>
+                        <input type="text" id="jobLocation" placeholder="e.g., Wote, Makueni" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description <span class="required">*</span></label>
+                    <textarea id="jobDescription" rows="3" placeholder="Describe the role and its purpose..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Responsibilities (one per line) <span class="required">*</span></label>
+                    <textarea id="jobResponsibilities" rows="4" placeholder="• Coordinate programs&#10;• Manage team&#10;• Prepare reports" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Requirements (one per line) <span class="required">*</span></label>
+                    <textarea id="jobRequirements" rows="4" placeholder="• Bachelor's degree&#10;• 3+ years experience&#10;• Strong communication skills" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Application Deadline <span class="required">*</span></label>
+                        <input type="date" id="jobDeadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Featured?</label>
+                        <select id="jobFeatured">
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="jobStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" id="saveJobBtn">Save Job</button>
+                <button type="button" class="btn-secondary" id="cancelJobForm" style="color: var(--primary); border-color: var(--primary);">Cancel</button>
+            </form>
+        </div>
+
+        <!-- Jobs List -->
+        <div id="adminJobsList"></div>
+    </div>
+
+    <script src="js/careers.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const jobFormCard = document.getElementById('jobFormCard');
+            const jobForm = document.getElementById('jobForm');
+            const jobsList = document.getElementById('adminJobsList');
+            const showFormBtn = document.getElementById('showJobFormBtn');
+            const cancelBtn = document.getElementById('cancelJobForm');
+
+            function renderAdminJobs() {
+                const jobs = getJobs();
+                jobsList.innerHTML = jobs.map(job => `
+                    <div class="admin-job-item">
+                        <div class="job-info">
+                            <h4>${job.title}</h4>
+                            <span>${job.department} • ${job.type} • ${job.location}</span>
+                            <span style="display:block; margin-top:4px;">
+                                <span class="status-badge ${job.status}">${job.status}</span>
+                                ${job.featured ? ' <span class="status-badge" style="background:#fff3e0; color:#E65100;">Featured</span>' : ''}
+                                <span style="font-size:0.8rem; color:#999; margin-left:10px;">Deadline: ${formatDate(job.deadline)}</span>
+                            </span>
+                        </div>
+                        <div class="job-actions">
+                            <button class="edit-btn" onclick="editJob(${job.id})"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="toggle-btn" onclick="toggleJob(${job.id})">
+                                <i class="fas ${job.status === 'active' ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                                ${job.status === 'active' ? 'Hide' : 'Show'}
+                            </button>
+                            <button class="delete-btn" onclick="deleteJob(${job.id})"><i class="fas fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            window.editJob = function(id) {
+                const job = getJobById(id);
+                if (!job) return;
+
+                document.getElementById('editJobId').value = id;
+                document.getElementById('formTitle').textContent = 'Edit Job';
+                document.getElementById('jobTitle').value = job.title;
+                document.getElementById('jobDepartment').value = job.department;
+                document.getElementById('jobType').value = job.type;
+                document.getElementById('jobLocation').value = job.location;
+                document.getElementById('jobDescription').value = job.description;
+                document.getElementById('jobResponsibilities').value = job.responsibilities.join('\n');
+                document.getElementById('jobRequirements').value = job.requirements.join('\n');
+                document.getElementById('jobDeadline').value = job.deadline;
+                document.getElementById('jobFeatured').value = job.featured;
+                document.getElementById('jobStatus').value = job.status;
+
+                jobFormCard.classList.add('active');
+                jobFormCard.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            window.toggleJob = function(id) {
+                const jobs = getJobs();
+                const job = jobs.find(j => j.id === id);
+                if (job) {
+                    job.status = job.status === 'active' ? 'inactive' : 'active';
+                    saveJobs(jobs);
+                    renderAdminJobs();
+                    renderJobs(getJobs().filter(j => j.status === 'active'));
+                    showNotification(`Job ${job.status === 'active' ? 'activated' : 'deactivated'} successfully!`, 'success');
+                }
+            };
+
+            window.deleteJob = function(id) {
+                if (!confirm('Are you sure you want to delete this job?')) return;
+                let jobs = getJobs();
+                jobs = jobs.filter(j => j.id !== id);
+                saveJobs(jobs);
+                renderAdminJobs();
+                renderJobs(getJobs().filter(j => j.status === 'active'));
+                showNotification('Job deleted successfully!', 'success');
+            };
+
+            showFormBtn.addEventListener('click', function() {
+                jobForm.reset();
+                document.getElementById('editJobId').value = '';
+                document.getElementById('formTitle').textContent = 'Add New Job';
+                jobFormCard.classList.add('active');
+                jobFormCard.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            cancelBtn.addEventListener('click', function() {
+                jobFormCard.classList.remove('active');
+            });
+
+            jobForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const id = document.getElementById('editJobId').value;
+                const title = document.getElementById('jobTitle').value.trim();
+                const department = document.getElementById('jobDepartment').value;
+                const type = document.getElementById('jobType').value;
+                const location = document.getElementById('jobLocation').value.trim();
+                const description = document.getElementById('jobDescription').value.trim();
+                const responsibilities = document.getElementById('jobResponsibilities').value.split('\n').filter(r => r.trim());
+                const requirements = document.getElementById('jobRequirements').value.split('\n').filter(r => r.trim());
+                const deadline = document.getElementById('jobDeadline').value;
+                const featured = document.getElementById('jobFeatured').value === 'true';
+                const status = document.getElementById('jobStatus').value;
+
+                if (!title || !description || responsibilities.length === 0 || requirements.length === 0 || !deadline) {
+                    showNotification('Please fill in all required fields.', 'error');
+                    return;
+                }
+
+                const jobData = {
+                    title,
+                    department,
+                    type,
+                    location,
+                    description,
+                    responsibilities,
+                    requirements,
+                    deadline,
+                    featured,
+                    status,
+                    postedDate: new Date().toISOString().split('T')[0]
+                };
+
+                let jobs = getJobs();
+
+                if (id) {
+                    // Update existing
+                    const index = jobs.findIndex(j => j.id === parseInt(id));
+                    if (index !== -1) {
+                        jobs[index] = { ...jobs[index], ...jobData };
+                        saveJobs(jobs);
+                        showNotification('Job updated successfully!', 'success');
+                    }
+                } else {
+                    // Create new
+                    const newJob = {
+                        id: Date.now(),
+                        ...jobData
+                    };
+                    jobs.unshift(newJob);
+                    saveJobs(jobs);
+                    showNotification('Job added successfully!', 'success');
+                }
+
+                jobFormCard.classList.remove('active');
+                renderAdminJobs();
+                renderJobs(getJobs().filter(j => j.status === 'active'));
+            });
+
+            // Initialize
+            renderAdminJobs();
+        });
+    </script>
+</body>
+</html>
