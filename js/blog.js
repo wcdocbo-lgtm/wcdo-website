@@ -4,7 +4,7 @@
 
 const BlogSystem = {
     // Google Apps Script API URL
-  API_URL: 'https://script.google.com/macros/s/AKfycbw8UTjHnLcZqWaXrYwOM-0nThpWNCiA7qw1_VRzHp_lWcS1fAVDAnWvVhV4NUJw0XHHmw/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbxsIoKiZ-zLrlomnnX4UR5vas30AMRtPXgszOLWKrzcOvoWbmwuXD3TS0Hycr-viOuWsA/exec',
     // Local storage key for backup
     STORAGE_KEY: 'wcdo_blog_posts',
     
