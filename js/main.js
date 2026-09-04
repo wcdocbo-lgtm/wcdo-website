@@ -553,7 +553,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const team = [
             { name: 'Veronicah Mweu', role: 'Chairperson', image: 'assets/images/Vero.png' },
             { name: 'Programs Administrator', role: 'BR Francis Musya', image: 'assets/images/Br.jpg' },
-            { name: 'Programs Manager', role: 'Felix Muendo BSRV', image: 'assets/images/felix.jpg' },
+            { name: 'Programs Manager', role: 'Felix Muendo BSRV', image: 'https://github.com/wcdocbo-lgtm/wcdo-website/blob/main/assets/images/felix.JPG?raw=true' },
             { name: 'Program Officer', role: 'Ann Mutie', image: 'assets/images/anna.jpg' }
         ];
         
