@@ -9,9 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // GOOGLE SHEETS CONFIGURATION
     // ========================================
     // !!! IMPORTANT: Replace with your actual Web App URL !!!
-const GOOGLE_APPS_SCRIPT_URL = 'https://api.allorigins.win/raw?url=' + 
-    encodeURIComponent('https://script.google.com/macros/s/AKfycbw8UTjHnLcZqWaXrYwOM-0nThpWNCiA7qw1_VRzHp_lWcS1fAVDAnWvVhV4NUJw0XHHmw/exec');
-    // Your other DOM elements (adminModal, loginForm, etc.)
+    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8UTjHnLcZqWaXrYwOM-0nThpWNCiA7qw1_VRzHp_lWcS1fAVDAnWvVhV4NUJw0XHHmw/exec';
+ // Your other DOM elements (adminModal, loginForm, etc.)
     const adminModal = document.getElementById('adminModal');
     const loginForm = document.getElementById('loginForm');
     const adminPanel = document.getElementById('adminPanel');
