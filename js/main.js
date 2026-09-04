@@ -552,9 +552,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const team = [
             { name: 'Veronicah Mweu', role: 'Chairperson', image: 'assets/images/Vero.png' },
-            { name: 'Programs Administrator', role: 'BR Francis Musya', image: 'assets/images/Br.jpg' },
+            { name: 'Programs Administrator', role: 'BR Francis Musya', image: 'https://github.com/wcdocbo-lgtm/wcdo-website/blob/main/assets/images/Br.JPG?raw=true' },
             { name: 'Programs Manager', role: 'Felix Muendo BSRV', image: 'https://github.com/wcdocbo-lgtm/wcdo-website/blob/main/assets/images/felix.JPG?raw=true' },
-            { name: 'Program Officer', role: 'Ann Mutie', image: 'assets/images/anna.jpg' }
+            { name: 'Program Officer', role: 'Ann Mutie', image: 'https://github.com/wcdocbo-lgtm/wcdo-website/blob/main/assets/images/anna.JPG?raw=true' }
         ];
         
         teamGrid.innerHTML = team.map(member => `
@@ -578,7 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 id: 1,
                 title: 'Community Health Outreach',
                 category: 'health',
-                image: 'assets/images/training 3.jpg',
+                image: 'https://github.com/wcdocbo-lgtm/wcdo-website/blob/main/assets/images/training%203.JPG?raw=true',
                 description: 'Mobile health clinics providing essential healthcare services to remote communities.',
                 status: 'active',
                 tag: 'Health'
