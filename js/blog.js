@@ -5,7 +5,7 @@
 const BlogSystem = {
     // Google Apps Script API URL
 API_URL: 'https://corsproxy.io/?url=' + 
-    encodeURIComponent('https://script.google.com/macros/s/AKfycbxsIoKiZ-zLrlomnnX4UR5vas30AMRtPXgszOLWKrzcOvoWbmwuXD3TS0Hycr-viOuWsA/exec'),
+    encodeURIComponent('https://script.google.com/macros/s/AKfycbyLi3JBTUYtlRw4Nof8LfEAD_q5rneBiaB6UtZr3MRJ679H_K8q-bFq0-f6WfQWzVyX/exec'),
     // Local storage key for backup
     STORAGE_KEY: 'wcdo_blog_posts',
     
