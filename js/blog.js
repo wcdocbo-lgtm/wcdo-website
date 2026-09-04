@@ -1,5 +1,5 @@
 // ========================================
-// BLOG SYSTEM - Google Sheets API (No Proxy)
+// BLOG SYSTEM - Google Sheets API (Fixed)
 // ========================================
 
 const BlogSystem = {
@@ -12,7 +12,7 @@ const BlogSystem = {
     // Local storage key for backup
     STORAGE_KEY: 'wcdo_blog_posts',
     
-    // Default posts
+    // Default posts (used as fallback)
     defaultPosts: [
         {
             id: 1,
@@ -24,28 +24,6 @@ const BlogSystem = {
             date: '2026-08-15',
             status: 'published',
             author: 'WCDO Team'
-        },
-        {
-            id: 2,
-            title: 'Scholarship Program Opens Applications for 2027',
-            category: 'Education',
-            image: 'https://via.placeholder.com/800x400/2d5a3d/ffffff?text=Scholarship',
-            excerpt: 'Applications are now open for our 2027 scholarship program.',
-            content: 'We are excited to announce that applications for the 2027 WCDO Scholarship Program are now open.',
-            date: '2026-08-10',
-            status: 'published',
-            author: 'WCDO Team'
-        },
-        {
-            id: 3,
-            title: 'Women Empowerment Workshop a Huge Success',
-            category: 'Stories',
-            image: 'https://via.placeholder.com/800x400/2d5a3d/ffffff?text=Women+Workshop',
-            excerpt: 'Over 100 women participated in our recent leadership workshop.',
-            content: 'The WCDO Women Empowerment Initiative hosted a transformative workshop for over 100 women.',
-            date: '2026-08-05',
-            status: 'published',
-            author: 'WCDO Team'
         }
     ],
     
@@ -54,7 +32,6 @@ const BlogSystem = {
     // ========================================
     async getPosts() {
         try {
-            // Use the Google Sheets API (no proxy!)
             const url = `https://docs.google.com/spreadsheets/d/${this.SHEET_ID}/gviz/tq?tqx=out:json&sheet=${this.SHEET_NAME}`;
             console.log('Fetching from:', url);
             
@@ -65,9 +42,12 @@ const BlogSystem = {
             }
             
             const text = await response.text();
+            console.log('Raw response:', text.substring(0, 200) + '...');
             
             // Parse the JSONP response
             const jsonData = JSON.parse(text.substring(47, text.length - 2));
+            console.log('Parsed data:', jsonData);
+            
             const rows = jsonData.table.rows;
             
             if (!rows || rows.length === 0) {
@@ -75,23 +55,49 @@ const BlogSystem = {
                 return this.getLocalPosts();
             }
             
-            // Get headers from the first row
+            // Get headers
             const headers = jsonData.table.cols.map(col => col.label.toLowerCase().replace(/ /g, '_'));
+            console.log('Headers:', headers);
             
-            // Convert rows to objects
+            // Convert rows to objects with proper date handling
             const posts = rows.map(row => {
                 const post = {};
                 row.c.forEach((cell, index) => {
                     const key = headers[index] || `col_${index}`;
-                    post[key] = cell ? cell.v : '';
+                    if (cell) {
+                        let value = cell.v;
+                        // Handle date format: "Date(2026,9,8)"
+                        if (cell.v && typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
+                            const dateStr = cell.v;
+                            const match = dateStr.match(/Date\((\d+),(\d+),(\d+)\)/);
+                            if (match) {
+                                const year = parseInt(match[1]);
+                                const month = parseInt(match[2]);
+                                const day = parseInt(match[3]);
+                                const dateObj = new Date(year, month, day);
+                                value = dateObj.toISOString().split('T')[0];
+                            }
+                        }
+                        // Handle number formatting
+                        if (key === 'id' && typeof value === 'number') {
+                            value = value.toString();
+                        }
+                        post[key] = value || '';
+                    } else {
+                        post[key] = '';
+                    }
                 });
                 return post;
             });
+            
+            console.log('Parsed posts:', posts);
             
             // Filter out empty rows and sort by date
             const validPosts = posts.filter(p => p.id).sort((a, b) => {
                 return new Date(b.date) - new Date(a.date);
             });
+            
+            console.log('Valid posts:', validPosts);
             
             // Cache locally
             try {
@@ -132,7 +138,7 @@ const BlogSystem = {
     // ========================================
     async getPublishedPosts() {
         const allPosts = await this.getPosts();
-        return allPosts.filter(post => post.status === 'published');
+        return allPosts.filter(post => post.status === 'published' || post.status === 'Published');
     },
     
     // ========================================
@@ -170,6 +176,8 @@ async function renderBlogPosts(posts) {
     if (!posts) {
         posts = await BlogSystem.getPublishedPosts();
     }
+    
+    console.log('Rendering posts:', posts);
     
     if (!posts || posts.length === 0) {
         blogGrid.innerHTML = `
@@ -289,7 +297,9 @@ function showNotification(message, type = 'success') {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Blog page loaded, fetching posts...');
     const publishedPosts = await BlogSystem.getPublishedPosts();
+    console.log('Published posts:', publishedPosts);
     renderBlogPosts(publishedPosts);
     
     const searchInput = document.getElementById('blogSearch');
