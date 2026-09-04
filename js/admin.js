@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // GOOGLE SHEETS CONFIGURATION
     // ========================================
     // !!! IMPORTANT: Replace with your actual Web App URL !!!
-const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsIoKiZ-zLrlomnnX4UR5vas30AMRtPXgszOLWKrzcOvoWbmwuXD3TS0Hycr-viOuWsA/exec';
+const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyLi3JBTUYtlRw4Nof8LfEAD_q5rneBiaB6UtZr3MRJ679H_K8q-bFq0-f6WfQWzVyX/exec';
     const CORS_PROXY_URL = 'https://corsproxy.io/?url=' + encodeURIComponent(GOOGLE_APPS_SCRIPT_URL);
 // Your other DOM elements (adminModal, loginForm, etc.)
     const adminModal = document.getElementById('adminModal');
