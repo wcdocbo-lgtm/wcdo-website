@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // GOOGLE SHEETS CONFIGURATION
     // ========================================
     // !!! IMPORTANT: Replace with your actual Web App URL !!!
-    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8UTjHnLcZqWaXrYwOM-0nThpWNCiA7qw1_VRzHp_lWcS1fAVDAnWvVhV4NUJw0XHHmw/exec';
+    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsIoKiZ-zLrlomnnX4UR5vas30AMRtPXgszOLWKrzcOvoWbmwuXD3TS0Hycr-viOuWsA/exec';
  // Your other DOM elements (adminModal, loginForm, etc.)
     const adminModal = document.getElementById('adminModal');
     const loginForm = document.getElementById('loginForm');
