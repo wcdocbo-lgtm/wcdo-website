@@ -3385,3 +3385,40 @@ img {
     font-size: 0.8rem;
     opacity: 0.9;
 }
+
+/* Blog Controls - Updated */
+.blog-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 40px;
+}
+
+.search-blog {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+}
+
+.search-blog input {
+    width: 100%;
+    padding: 12px 45px 12px 20px;
+    border: 2px solid #e8ecf1;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.search-blog input:focus {
+    outline: none;
+    border-color: #2E7D32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.search-blog i {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
