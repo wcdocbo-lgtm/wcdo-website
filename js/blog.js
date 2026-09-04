@@ -1,23 +1,26 @@
 // ========================================
-// BLOG SYSTEM - Google Sheets Integration
+// BLOG SYSTEM - Google Sheets API (No Proxy)
 // ========================================
 
 const BlogSystem = {
-    // Google Apps Script API URL
-API_URL: 'https://corsproxy.io/?url=' + 
-    encodeURIComponent('https://script.google.com/macros/s/AKfycbyLi3JBTUYtlRw4Nof8LfEAD_q5rneBiaB6UtZr3MRJ679H_K8q-bFq0-f6WfQWzVyX/exec'),
+    // Your Google Sheet ID
+    SHEET_ID: '1C-7Nx0OoMP_tPTqlZCAb-npbLLdbd-PS96HPrkaECZI',
+    
+    // Sheet name
+    SHEET_NAME: 'Blog Posts',
+    
     // Local storage key for backup
     STORAGE_KEY: 'wcdo_blog_posts',
     
-    // Default posts (used if both API and local storage fail)
+    // Default posts
     defaultPosts: [
         {
             id: 1,
             title: 'Community Health Outreach Reaches 500 Families',
             category: 'News',
             image: 'https://via.placeholder.com/800x400/2d5a3d/ffffff?text=Health+Outreach',
-            excerpt: 'Our mobile health clinics provided essential healthcare services to 500 families in remote areas of Makueni County.',
-            content: 'The WCDO Community Health Outreach program successfully reached over 500 families in the remote areas of Makueni County. The initiative provided free medical checkups, health education, and referrals for chronic conditions. This program is part of our commitment to ensuring accessible healthcare for all community members.',
+            excerpt: 'Our mobile health clinics provided essential healthcare services to 500 families.',
+            content: 'The WCDO Community Health Outreach program successfully reached over 500 families.',
             date: '2026-08-15',
             status: 'published',
             author: 'WCDO Team'
@@ -27,8 +30,8 @@ API_URL: 'https://corsproxy.io/?url=' +
             title: 'Scholarship Program Opens Applications for 2027',
             category: 'Education',
             image: 'https://via.placeholder.com/800x400/2d5a3d/ffffff?text=Scholarship',
-            excerpt: 'Applications are now open for our 2027 scholarship program targeting vulnerable children and youth.',
-            content: 'We are excited to announce that applications for the 2027 WCDO Scholarship Program are now open. This program provides educational support to bright but vulnerable students in Makueni County. Applications are open until December 31, 2026. We encourage eligible students to apply.',
+            excerpt: 'Applications are now open for our 2027 scholarship program.',
+            content: 'We are excited to announce that applications for the 2027 WCDO Scholarship Program are now open.',
             date: '2026-08-10',
             status: 'published',
             author: 'WCDO Team'
@@ -38,8 +41,8 @@ API_URL: 'https://corsproxy.io/?url=' +
             title: 'Women Empowerment Workshop a Huge Success',
             category: 'Stories',
             image: 'https://via.placeholder.com/800x400/2d5a3d/ffffff?text=Women+Workshop',
-            excerpt: 'Over 100 women participated in our recent leadership and entrepreneurship workshop.',
-            content: 'The WCDO Women Empowerment Initiative hosted a transformative workshop for over 100 women in Wote. The program focused on leadership skills, financial literacy, and entrepreneurship. Participants left with actionable plans to start or grow their businesses.',
+            excerpt: 'Over 100 women participated in our recent leadership workshop.',
+            content: 'The WCDO Women Empowerment Initiative hosted a transformative workshop for over 100 women.',
             date: '2026-08-05',
             status: 'published',
             author: 'WCDO Team'
@@ -47,30 +50,57 @@ API_URL: 'https://corsproxy.io/?url=' +
     ],
     
     // ========================================
-    // GET ALL POSTS FROM GOOGLE SHEETS
+    // GET POSTS FROM GOOGLE SHEETS
     // ========================================
     async getPosts() {
         try {
-            // Fetch from Google Sheets via Apps Script
-            const response = await fetch(`${this.API_URL}?action=getPosts`);
-            const result = await response.json();
+            // Use the Google Sheets API (no proxy!)
+            const url = `https://docs.google.com/spreadsheets/d/${this.SHEET_ID}/gviz/tq?tqx=out:json&sheet=${this.SHEET_NAME}`;
+            console.log('Fetching from:', url);
             
-            if (result.success && result.data) {
-                // Cache in localStorage as backup
-                try {
-                    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(result.data));
-                } catch (e) {
-                    console.warn('Could not cache posts locally:', e);
-                }
-                return result.data;
-            } else {
-                console.error('Error fetching posts from API:', result.data || 'Unknown error');
-                // Fallback to local storage
+            const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const text = await response.text();
+            
+            // Parse the JSONP response
+            const jsonData = JSON.parse(text.substring(47, text.length - 2));
+            const rows = jsonData.table.rows;
+            
+            if (!rows || rows.length === 0) {
+                console.log('No data found in sheet');
                 return this.getLocalPosts();
             }
+            
+            // Get headers from the first row
+            const headers = jsonData.table.cols.map(col => col.label.toLowerCase().replace(/ /g, '_'));
+            
+            // Convert rows to objects
+            const posts = rows.map(row => {
+                const post = {};
+                row.c.forEach((cell, index) => {
+                    const key = headers[index] || `col_${index}`;
+                    post[key] = cell ? cell.v : '';
+                });
+                return post;
+            });
+            
+            // Filter out empty rows and sort by date
+            const validPosts = posts.filter(p => p.id).sort((a, b) => {
+                return new Date(b.date) - new Date(a.date);
+            });
+            
+            // Cache locally
+            try {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(validPosts));
+            } catch (e) {}
+            
+            return validPosts;
         } catch (error) {
-            console.error('Network error fetching posts:', error);
-            // Fallback to local storage
+            console.error('Error fetching from Google Sheets:', error);
             return this.getLocalPosts();
         }
     },
@@ -84,24 +114,17 @@ API_URL: 'https://corsproxy.io/?url=' +
             if (data) {
                 return JSON.parse(data);
             }
-            // Initialize with default posts
             this.saveLocalPosts(this.defaultPosts);
             return this.defaultPosts;
         } catch (e) {
-            console.error('Error loading local posts:', e);
             return this.defaultPosts;
         }
     },
     
-    // ========================================
-    // SAVE LOCAL POSTS (Backup)
-    // ========================================
     saveLocalPosts(posts) {
         try {
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(posts));
-        } catch (e) {
-            console.error('Error saving posts locally:', e);
-        }
+        } catch (e) {}
     },
     
     // ========================================
@@ -121,152 +144,7 @@ API_URL: 'https://corsproxy.io/?url=' +
     },
     
     // ========================================
-    // CREATE A NEW POST (via API)
-    // ========================================
-    async createPost(postData) {
-        try {
-            const newPost = {
-                id: null, // Let the server generate the ID
-                ...postData,
-                date: new Date().toISOString().split('T')[0],
-                author: 'WCDO Admin'
-            };
-            
-            const response = await fetch(this.API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'savePost',
-                    ...newPost
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Update local cache
-                const localPosts = this.getLocalPosts();
-                localPosts.unshift({ ...newPost, id: result.data?.id || Date.now() });
-                this.saveLocalPosts(localPosts);
-                return { success: true, data: result.data };
-            } else {
-                console.error('API error creating post:', result.data);
-                // Fallback: save locally
-                const fallbackPost = {
-                    id: Date.now(),
-                    ...postData,
-                    date: new Date().toISOString().split('T')[0],
-                    author: 'WCDO Admin'
-                };
-                const localPosts = this.getLocalPosts();
-                localPosts.unshift(fallbackPost);
-                this.saveLocalPosts(localPosts);
-                return { success: true, data: fallbackPost, fallback: true };
-            }
-        } catch (error) {
-            console.error('Network error creating post:', error);
-            // Fallback: save locally
-            const fallbackPost = {
-                id: Date.now(),
-                ...postData,
-                date: new Date().toISOString().split('T')[0],
-                author: 'WCDO Admin'
-            };
-            const localPosts = this.getLocalPosts();
-            localPosts.unshift(fallbackPost);
-            this.saveLocalPosts(localPosts);
-            return { success: true, data: fallbackPost, fallback: true };
-        }
-    },
-    
-    // ========================================
-    // UPDATE A POST (via API)
-    // ========================================
-    async updatePost(id, postData) {
-        try {
-            const response = await fetch(this.API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'savePost',
-                    id: id,
-                    ...postData
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Update local cache
-                const localPosts = this.getLocalPosts();
-                const index = localPosts.findIndex(post => post.id === id);
-                if (index !== -1) {
-                    localPosts[index] = { ...localPosts[index], ...postData };
-                    this.saveLocalPosts(localPosts);
-                }
-                return { success: true, data: result.data };
-            } else {
-                console.error('API error updating post:', result.data);
-                // Fallback: update locally
-                const localPosts = this.getLocalPosts();
-                const index = localPosts.findIndex(post => post.id === id);
-                if (index !== -1) {
-                    localPosts[index] = { ...localPosts[index], ...postData };
-                    this.saveLocalPosts(localPosts);
-                }
-                return { success: true, fallback: true };
-            }
-        } catch (error) {
-            console.error('Network error updating post:', error);
-            // Fallback: update locally
-            const localPosts = this.getLocalPosts();
-            const index = localPosts.findIndex(post => post.id === id);
-            if (index !== -1) {
-                localPosts[index] = { ...localPosts[index], ...postData };
-                this.saveLocalPosts(localPosts);
-            }
-            return { success: true, fallback: true };
-        }
-    },
-    
-    // ========================================
-    // DELETE A POST (via API)
-    // ========================================
-    async deletePost(id) {
-        try {
-            const response = await fetch(this.API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'deletePost',
-                    id: id
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Update local cache
-                let localPosts = this.getLocalPosts();
-                localPosts = localPosts.filter(post => post.id !== id);
-                this.saveLocalPosts(localPosts);
-                return { success: true };
-            } else {
-                console.error('API error deleting post:', result.data);
-                return { success: false, error: result.data };
-            }
-        } catch (error) {
-            console.error('Network error deleting post:', error);
-            // Fallback: delete locally
-            let localPosts = this.getLocalPosts();
-            localPosts = localPosts.filter(post => post.id !== id);
-            this.saveLocalPosts(localPosts);
-            return { success: true, fallback: true };
-        }
-    },
-    
-    // ========================================
-    // SEARCH POSTS (Local search)
+    // SEARCH POSTS
     // ========================================
     async searchPosts(query) {
         const posts = await this.getPosts();
@@ -289,7 +167,6 @@ async function renderBlogPosts(posts) {
     const blogGrid = document.getElementById('blogGrid');
     if (!blogGrid) return;
     
-    // If no posts passed, fetch them
     if (!posts) {
         posts = await BlogSystem.getPublishedPosts();
     }
@@ -412,11 +289,9 @@ function showNotification(message, type = 'success') {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async function() {
-    // Render published posts
     const publishedPosts = await BlogSystem.getPublishedPosts();
     renderBlogPosts(publishedPosts);
     
-    // Handle search
     const searchInput = document.getElementById('blogSearch');
     if (searchInput) {
         searchInput.addEventListener('input', async function() {
@@ -426,7 +301,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
     
-    // Admin button
     const adminBtn = document.getElementById('openAdminBtn');
     if (adminBtn) {
         adminBtn.addEventListener('click', function() {
@@ -435,7 +309,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
     
-    // Blog modal close handlers
     const modal = document.getElementById('blogModal');
     const closeBtn = modal?.querySelector('.close-modal');
     
